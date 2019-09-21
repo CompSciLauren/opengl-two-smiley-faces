@@ -1,2 +1,4 @@
-# opengl-project1
+# OpenGL Project1
+
 My first OpenGL project
+

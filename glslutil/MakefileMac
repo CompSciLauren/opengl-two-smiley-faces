@@ -1,0 +1,13 @@
+CPP = g++ -std=c++11
+C_FLAGS = -I/usr/local/include -fPIC -g -c -DGLFW_INCLUDE_GLEXT -DGLFW_INCLUDE_GLCOREARB -DGL_SILENCE_DEPRECATION
+
+LINK = g++ -fPIC
+
+OBJS = ShaderIF.o
+
+libglsl.so: $(OBJS)
+	$(LINK) -shared -o libglsl.so $(OBJS) -framework OpenGL
+	cp libglsl.so ../lib/
+
+ShaderIF.o: ShaderIF.h ShaderIF.c++
+	$(CPP) $(C_FLAGS) ShaderIF.c++
