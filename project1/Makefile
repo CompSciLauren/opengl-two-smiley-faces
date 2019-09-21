@@ -23,10 +23,10 @@ main: $(OBJS) $(LOCAL_UTIL_LIBRARIES)
 ../lib/libglsl.so: ../glslutil/ShaderIF.h ../glslutil/ShaderIF.c++
 	(cd ../glslutil; $(MAKE))
 
-main.o: main.c++
-	$(CPP) $(C_FLAGS) main.c++
-ModelView.o: ModelView.h ModelView.c++
-	$(CPP) $(C_FLAGS) ModelView.c++
+main.o: main.cpp
+	$(CPP) $(C_FLAGS) main.cpp
+ModelView.o: ModelView.h ModelView.cpp
+	$(CPP) $(C_FLAGS) ModelView.cpp
 Controller.o: ../mvcutil/Controller.h ../mvcutil/Controller.c++
 	$(CPP) $(C_FLAGS) -DGLFW_INCLUDE_GLU ../mvcutil/Controller.c++
 GLFWController.o: ../mvcutil/GLFWController.h ../mvcutil/GLFWController.c++
