@@ -33,10 +33,24 @@ public:
 
 private:
 	// TODO: VAO(s), VBO(s), and other relevant INSTANCE variables
+	// DONE
+	GLuint vao[1]; // 1 vao
+	GLuint vbo[1]; // 1 vbo (holds per-vertex attribute data)
+	int numVertices;
+	int serialNumber;
+	float xmin, xmax, ymin, ymax;
+	vec3 triangleColor;
 
 	ShaderIF* shaderIF;
 	
 	// TODO: add uniform and attribute variable location CLASS variables
+	// DONE
+	
+	ShaderIF* shaderIF;
+
+	void deleteObject();
+
+	void initModelGeometry(vec2* vertices);
 
 	// Routines for computing parameters necessary to map from arbitrary
 	// model coordinate ranges into OpenGL's -1..+1 Logical Device Space.
@@ -58,6 +72,7 @@ private:
 	static void compute2DScaleTrans(float* scaleTrans);
 
 	static double mcRegionOfInterest[6];
+	static int numInstances; // needed for serialNumber
 	static bool aspectRatioPreservationEnabled;
 };
 

@@ -11,22 +11,37 @@ bool ModelView::aspectRatioPreservationEnabled = true;
 
 // NOTE: You will likely want to modify the ModelView constructor to
 //       take additional parameters.
-ModelView::ModelView(ShaderIF* sIF) : shaderIF(sIF)
+ModelView::ModelView(ShaderIF* sIF, vec2* triangleVertices, int nPoints) : shaderIF(sIF), serialNumber(++numInstances)
 {
 	// TODO: define and call method(s) to initialize your model and send data to GPU
 	//       Be sure to track this instance's min/max coordinate ranges as you do so.
 	//       (See ModelView::getMCBoundingBox below.)
+	// DONE
+	initModelGeometry(triangleVertices);
 }
 
 ModelView::~ModelView()
 {
 	// TODO: delete the vertex array objects and buffers here
+	// DONE
+	deleteObject();
+}
+
+void ModelView::deleteObject()
+{
+	if (vao[0] > 0) // not already deleted
+	{
+		glDeleteBuffers(1, vbo);
+		glDeleteVertexArrays(1, vao);
+		vao[0] = vbo[0] = 0;
+	}
 }
 
 void ModelView::compute2DScaleTrans(float* scaleTransF) // CLASS METHOD
 {
 	// TODO: This code can be used as is, BUT be absolutely certain you
 	//       understand everything about how it works.
+	// DONE
 
 	double xmin = mcRegionOfInterest[0];
 	double xmax = mcRegionOfInterest[1];
@@ -55,13 +70,71 @@ void ModelView::compute2DScaleTrans(float* scaleTransF) // CLASS METHOD
 void ModelView::getMCBoundingBox(double* xyzLimits) const
 {
 	// TODO:
+	// DONE
 	// Put this ModelView instance's min and max x, y, and z extents
 	// into xyzLimits[0..5]. (-1 .. +1 is OK for z direction for 2D models)
+	xyzLimits[0] = xmin;
+	xyzLimits[1] = xmax;
+	xyzLimits[2] = ymin;
+	xyzLimits[3] = ymax;
+	xyzLimits[4] = -1.0; // [4] and [5] are
+	xyzLimits[5] = 1.0;  // (zmin, zmax) but really it's 0..0
 }
 
 bool ModelView::handleCommand(unsigned char anASCIIChar, double ldsX, double ldsY)
 {
 	return true;
+}
+
+void ModelView::initModelGeometry(vec2* vertices) // assume numVerticesInTriangle
+{
+	// Alternate triangle colors between dark green and dark red
+	if ((serialNumber % 2) == 1)
+	{
+		triangleColor[0] = 0.0; triangleColor[1] = 0.5; triangleColor[2] = 0.0;
+	}
+	else
+	{
+		triangleColor[0] = 0.5; triangleColor[1] = 0.0; triangleColor[2] = 0.0;
+	}
+
+	// create VAO and VBO names
+	glGenVertexArrays(1, vao);
+	glGenBuffers(1, vbo);
+
+	// initialize them
+	glBindVertexArray(vao[0]);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
+
+	// allocate space, send data to GPU
+	int numBytesInBuffer = numVerticesInTriangle * sizeof(vec2);
+	glBufferData(GL_ARRAY_BUFFER, numBytesInBuffer, vertices, GL_STATIC_DRAW);
+	glVertexAttribPointer(shaderIF->pvaLoc("mcPosition"), 2, GL_FLOAT, GL_FALSE, 0, 0);
+	glEnableVertexAttribArray(shaderIF->pvaLoc("mcPosition"));
+
+	// determine and remember min/max coordinates
+	xmin = xmax = vertices[0][0];
+	ymin = ymax = vertices[0][1];
+	for (int i = 0; i < 3; i++)
+	{
+		if (vertices[i][0] < xmin)
+		{
+			xmin = vertices[i][0];
+		}
+		else if (vertices[i][0] >xmax)
+		{
+			xmax = vertices[i][0];
+		}
+
+		if (vertices[i][1] < ymin)
+		{
+			ymin = vertices[i][1];
+		}
+		else if (vertices[i][1] > ymax)
+		{
+			ymax = vertices[i][1];
+		}
+	}
 }
 
 // linearMap determines the scale and translate parameters needed in
@@ -79,6 +152,7 @@ void ModelView::matchAspectRatio(double& xmin, double& xmax,
 {
 	// TODO: This code can be used as is, BUT be absolutely certain you
 	//       understand everything about how it works.
+	// DONE
 
 	double wHeight = ymax - ymin;
 	double wWidth = xmax - xmin;
@@ -111,8 +185,17 @@ void ModelView::render() const
 	glUseProgram(shaderIF->getShaderPgmID());
 
 	// TODO: set scaleTrans (and all other needed) uniform(s)
+	// DONE
+	float scaleTrans[4];
+	compute2DScaleTrans(scaleTrans);
+	glUniform4fv(shaderIF->ppuLoc("scaleTrans"), 1, scaleTrans);
+
+	glUniform3fv(shaderIF->ppuLoc("color"), 1, triangleColor); // establish the triangle color
 
 	// TODO: make require primitive call(s)
+	// DONE
+	glBindVertexArray(vao[0]);
+	glDrawArrays(GL_TRIANGLES, 0, numVerticesInTriangle);
 
 	// restore the previous program
 	glUseProgram(pgm);

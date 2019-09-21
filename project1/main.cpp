@@ -6,6 +6,17 @@
 void createScene(GLFWController& c, ShaderIF* sIF)
 {
 	// TODO: Complete this function
+	// DONE
+	vec2 vertexPositions[][3] =
+	{
+		// triangle 1
+		{ { -6.0, 137.0 }, {2.0, 137.0 }, {-2.0, 145.0 } },
+		// triangle 2
+		{ { -6.0, 135.0 }, {2.0, 135.0 }, { -2.0, 127.0 } }
+	};
+
+	c.addModel(new ModelView(sIF, vertexPosition[0]));
+	c.addModel(new ModelView(sIF, vertexPosition[1]));
 }
 
 int main(int argc, char* argv[])
