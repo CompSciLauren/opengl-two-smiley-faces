@@ -13,12 +13,16 @@
 #include <GL/gl.h>
 #endif
 
+// for interfacing to common GLSL data types
+typedef float vec2[2];
+typedef float vec3[3];
+
 class ModelView
 {
 public:
 	// NOTE: You will likely want to modify the ModelView constructor to
 	//       take additional parameters.
-	ModelView(ShaderIF* sIF);
+	ModelView(ShaderIF* sIF, vec2* vertices, int nPoints, int mPoints);
 	virtual ~ModelView();
 
 	// xyzLimits: {mcXmin, mcXmax, mcYmin, mcYmax, mcZmin, mcZmax}
@@ -36,17 +40,17 @@ private:
 	// DONE
 	GLuint vao[1]; // 1 vao
 	GLuint vbo[1]; // 1 vbo (holds per-vertex attribute data)
-	int numVertices;
+	int nTotalPoints;
+	int mTotalPoints;
 	int serialNumber;
 	float xmin, xmax, ymin, ymax;
-	vec3 triangleColor;
+	vec3 nColor;
+	vec3 mColor;
 
 	ShaderIF* shaderIF;
 	
 	// TODO: add uniform and attribute variable location CLASS variables
 	// DONE
-	
-	ShaderIF* shaderIF;
 
 	void deleteObject();
 

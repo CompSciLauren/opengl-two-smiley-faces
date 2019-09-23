@@ -8,15 +8,18 @@
 
 double ModelView::mcRegionOfInterest[6] = { -1.0, 1.0, -1.0, 1.0, -1.0, 1.0 };
 bool ModelView::aspectRatioPreservationEnabled = true;
+int ModelView::numInstances = 0;
 
 // NOTE: You will likely want to modify the ModelView constructor to
 //       take additional parameters.
-ModelView::ModelView(ShaderIF* sIF, vec2* triangleVertices, int nPoints) : shaderIF(sIF), serialNumber(++numInstances)
+ModelView::ModelView(ShaderIF* sIF, vec2* triangleVertices, int nPoints, int mPoints) : shaderIF(sIF), serialNumber(++numInstances)
 {
 	// TODO: define and call method(s) to initialize your model and send data to GPU
 	//       Be sure to track this instance's min/max coordinate ranges as you do so.
 	//       (See ModelView::getMCBoundingBox below.)
 	// DONE
+	nTotalPoints = nPoints;
+	mTotalPoints = mPoints;
 	initModelGeometry(triangleVertices);
 }
 
@@ -33,7 +36,7 @@ void ModelView::deleteObject()
 	{
 		glDeleteBuffers(1, vbo);
 		glDeleteVertexArrays(1, vao);
-		vao[0] = vbo[0] = 0;
+		//vao[0] = vbo[0] = 0; keep? don't keep?
 	}
 }
 
@@ -86,16 +89,16 @@ bool ModelView::handleCommand(unsigned char anASCIIChar, double ldsX, double lds
 	return true;
 }
 
-void ModelView::initModelGeometry(vec2* vertices) // assume numVerticesInTriangle
+void ModelView::initModelGeometry(vec2* vertices)
 {
 	// Alternate triangle colors between dark green and dark red
 	if ((serialNumber % 2) == 1)
 	{
-		triangleColor[0] = 0.0; triangleColor[1] = 0.5; triangleColor[2] = 0.0;
+		nColor[0] = 0.0; nColor[1] = 0.5; nColor[2] = 0.0;
 	}
 	else
 	{
-		triangleColor[0] = 0.5; triangleColor[1] = 0.0; triangleColor[2] = 0.0;
+		nColor[0] = 0.5; nColor[1] = 0.0; nColor[2] = 0.0;
 	}
 
 	// create VAO and VBO names
@@ -107,7 +110,7 @@ void ModelView::initModelGeometry(vec2* vertices) // assume numVerticesInTriangl
 	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
 
 	// allocate space, send data to GPU
-	int numBytesInBuffer = numVerticesInTriangle * sizeof(vec2);
+	int numBytesInBuffer = nTotalPoints * sizeof(vec2);
 	glBufferData(GL_ARRAY_BUFFER, numBytesInBuffer, vertices, GL_STATIC_DRAW);
 	glVertexAttribPointer(shaderIF->pvaLoc("mcPosition"), 2, GL_FLOAT, GL_FALSE, 0, 0);
 	glEnableVertexAttribArray(shaderIF->pvaLoc("mcPosition"));
@@ -115,13 +118,13 @@ void ModelView::initModelGeometry(vec2* vertices) // assume numVerticesInTriangl
 	// determine and remember min/max coordinates
 	xmin = xmax = vertices[0][0];
 	ymin = ymax = vertices[0][1];
-	for (int i = 0; i < 3; i++)
+	for (int i = 0; i < nTotalPoints; i++)
 	{
 		if (vertices[i][0] < xmin)
 		{
 			xmin = vertices[i][0];
 		}
-		else if (vertices[i][0] >xmax)
+		else if (vertices[i][0] > xmax)
 		{
 			xmax = vertices[i][0];
 		}
@@ -190,12 +193,17 @@ void ModelView::render() const
 	compute2DScaleTrans(scaleTrans);
 	glUniform4fv(shaderIF->ppuLoc("scaleTrans"), 1, scaleTrans);
 
-	glUniform3fv(shaderIF->ppuLoc("color"), 1, triangleColor); // establish the triangle color
+	glUniform3fv(shaderIF->ppuLoc("color"), 1, nColor); // establish the triangle color
 
+
+	glUniform3fv(shaderIF->ppuLoc("color"), 1, mColor); // establish the triangle color
 	// TODO: make require primitive call(s)
 	// DONE
 	glBindVertexArray(vao[0]);
-	glDrawArrays(GL_TRIANGLES, 0, numVerticesInTriangle);
+	glDrawArrays(GL_LINE_STRIP, 0, nTotalPoints);
+
+	glBindVertexArray(vao[1]);
+	glDrawArrays(GL_LINE_STRIP, 0, mTotalPoints);
 
 	// restore the previous program
 	glUseProgram(pgm);

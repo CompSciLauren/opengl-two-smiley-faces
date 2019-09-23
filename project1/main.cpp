@@ -2,21 +2,34 @@
 
 #include "GLFWController.h"
 #include "ModelView.h"
+#include <math.h>
+#include <fstream>
 
-void createScene(GLFWController& c, ShaderIF* sIF)
+void createScene(GLFWController& c, ShaderIF* sIF, float a[], float b[], int nPoints, int mPoints)
 {
 	// TODO: Complete this function
 	// DONE
-	vec2 vertexPositions[][3] =
-	{
-		// triangle 1
-		{ { -6.0, 137.0 }, {2.0, 137.0 }, {-2.0, 145.0 } },
-		// triangle 2
-		{ { -6.0, 135.0 }, {2.0, 135.0 }, { -2.0, 127.0 } }
-	};
+	float dt = 1.0 / (mPoints - 1);
+	float xt, yt;
 
-	c.addModel(new ModelView(sIF, vertexPosition[0]));
-	c.addModel(new ModelView(sIF, vertexPosition[1]));
+	vec2 vertices[nPoints];
+	vec2 buf[nPoints];
+
+	for (int i = 0; i < nPoints - 2; i++)
+	{
+		float t = i * dt;
+		for (int j = 0; j < nPoints - j - 2; j++) 
+		{
+			// buf[j] = (1 - t) * buf[j] + t * buf[j + 1];
+			xt = a[0] + (a[1] * t) + (a[2] * pow(t, 2.0)) + (a[3] * pow(t, 3.0));
+			yt = b[0] + (b[1] * t) + (b[2] * pow(t, 2.0)) + (b[3] * pow(t, 3.0));
+		}
+		// i-th point for the VBO is now in buf[0]
+		vertices[i][0] = xt;
+		vertices[i][1] = yt;
+	}
+
+	c.addModel(new ModelView(sIF, vertices, nPoints, mPoints));
 }
 
 int main(int argc, char* argv[])
@@ -26,7 +39,27 @@ int main(int argc, char* argv[])
 
 	ShaderIF* sIF = new ShaderIF("shaders/project1.vsh", "shaders/project1.fsh");
 
-	createScene(c, sIF);
+	int nPoints = 0;
+	int mPoints = 0;
+
+	std::ifstream userFileChoice;
+	std::string fileName = argv[1];
+	userFileChoice.open(fileName);
+	while (userFileChoice)
+	{
+		userFileChoice >> nPoints;
+		userFileChoice >> mPoints;
+		float a[nPoints];
+		float b[nPoints];
+		
+		for (int i = 0; i < nPoints; i++)
+		{
+			userFileChoice >> a[i];
+			userFileChoice >> b[i];
+		}
+
+		createScene(c, sIF, a, b, nPoints, mPoints);
+	}
 
 	// initialize 2D viewing information:
 	// Get the overall scene bounding box in Model Coordinates:
@@ -38,6 +71,7 @@ int main(int argc, char* argv[])
 	// Tell class ModelView we initially want to see the whole scene:
 	ModelView::setMCRegionOfInterest(xyz);
 
+	glClearColor(1.0, 1.0, 1.0, 1.0);
 	c.run();
 
 	delete sIF;
