@@ -63,7 +63,7 @@ int main(int argc, char* argv[])
 	std::ifstream userFileChoice;
 	std::string fileName = argv[1];
 	userFileChoice.open(fileName);
-	for (int i = 0; i < 8; i++) // was while (userFileChoice)
+	while (!userFileChoice.eof())
 	{
 		userFileChoice >> totalNPoints;
 		userFileChoice >> mPoints;
