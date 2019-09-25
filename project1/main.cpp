@@ -37,16 +37,16 @@ void createScene(GLFWController& c, ShaderIF* sIF, float a[], float b[], int tot
 		 {
 		 	for (int k = 0; k <= totalNPoints - j - 2; k++)
 		 	{
-//				std::cout << "VALUES OF N: " << totalNPoints - j - 2 << "\n";
-				// std::cout << "VALUES OF K: " << k << "\n";
-
-		 		buf[j][0] = (1 - t) * buf[j][0] + t * buf[j + 1][0];
-		 		buf[j][1] = (1 - t) * buf[j][1] + t * buf[j + 1][1];
+		 		buf[k][0] = (1 - t) * buf[k][0] + t * buf[k + 1][0];
+		 		buf[k][1] = (1 - t) * buf[k][1] + t * buf[k + 1][1];
 		 	}
 		 }
 		//i-th point for the VBO is now in buf[0]
 		mPointVertices[i][0] = buf[0][0];
 		mPointVertices[i][1] = buf[0][1];
+
+		std::cout << "x: " << mPointVertices[i][0] << "\n";
+		std::cout << "y: " << mPointVertices[i][1] << "\n";
 	}
 
 	c.addModel(new ModelView(sIF, vertices, totalNPoints, mPoints, mPointVertices));
