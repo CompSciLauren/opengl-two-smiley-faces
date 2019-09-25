@@ -5,29 +5,26 @@
 #include <math.h>
 #include <fstream>
 
-void createScene(GLFWController& c, ShaderIF* sIF, float a[], float b[], int totalNPoints, int mPoints)
+void createScene(GLFWController& c, ShaderIF* sIF, float xValues[], float yValues[], int totalNPoints, int totalMPoints)
 {
-	float dt = 1.0 / (mPoints - 1);
-	
-	vec2 vertices[totalNPoints];
+	float dt = 1.0 / (totalMPoints - 1);
+	vec2 nVertexPositions[totalNPoints];
 	vec2 buf[totalNPoints];
-
-	vec2* mPointVertices = new vec2[mPoints];
-
+	vec2* mVertexPositions = new vec2[totalMPoints];
 	float t;
 
 	for (int i = 0; i < totalNPoints; i++)
 	{
-		vertices[i][0] = a[i];
-		vertices[i][1] = b[i];
+		nVertexPositions[i][0] = xValues[i];
+		nVertexPositions[i][1] = yValues[i];
 	}
 
-	for (int i = 0; i < mPoints; i++)
+	for (int i = 0; i < totalMPoints; i++)
 	{
 		for (int a = 0; a < totalNPoints; a++)
 		{
-			buf[a][0] = vertices[a][0];
-			buf[a][1] = vertices[a][1];
+			buf[a][0] = nVertexPositions[a][0];
+			buf[a][1] = nVertexPositions[a][1];
 		}
 
 		t = i * dt;
@@ -39,15 +36,12 @@ void createScene(GLFWController& c, ShaderIF* sIF, float a[], float b[], int tot
 		 		buf[k][1] = (1 - t) * buf[k][1] + t * buf[k + 1][1];
 		 	}
 		 }
-		//i-th point for the VBO is now in buf[0]
-		mPointVertices[i][0] = buf[0][0];
-		mPointVertices[i][1] = buf[0][1];
-
-		std::cout << "x: " << mPointVertices[i][0] << "\n";
-		std::cout << "y: " << mPointVertices[i][1] << "\n";
+		// i-th point for the VBO is now in buf[0]
+		mVertexPositions[i][0] = buf[0][0];
+		mVertexPositions[i][1] = buf[0][1];
 	}
 
-	c.addModel(new ModelView(sIF, vertices, totalNPoints, mPoints, mPointVertices));
+	c.addModel(new ModelView(sIF, nVertexPositions, totalNPoints, totalMPoints, mVertexPositions));
 }
 
 int main(int argc, char* argv[])
@@ -58,7 +52,7 @@ int main(int argc, char* argv[])
 	ShaderIF* sIF = new ShaderIF("shaders/project1.vsh", "shaders/project1.fsh");
 
 	int totalNPoints = 0;
-	int mPoints = 0;
+	int totalMPoints = 0;
 
 	std::ifstream userFileChoice;
 	std::string fileName = argv[1];
@@ -66,17 +60,17 @@ int main(int argc, char* argv[])
 	while (!userFileChoice.eof())
 	{
 		userFileChoice >> totalNPoints;
-		userFileChoice >> mPoints;
-		float a[totalNPoints];
-		float b[totalNPoints];
+		userFileChoice >> totalMPoints;
+		float xValues[totalNPoints];
+		float yValues[totalNPoints];
 		
 		for (int i = 0; i < totalNPoints; i++)
 		{
-			userFileChoice >> a[i];
-			userFileChoice >> b[i];
+			userFileChoice >> xValues[i];
+			userFileChoice >> yValues[i];
 		}
 
-		createScene(c, sIF, a, b, totalNPoints, mPoints);
+		createScene(c, sIF, xValues, yValues, totalNPoints, totalMPoints);
 	}
 
 	// initialize 2D viewing information:

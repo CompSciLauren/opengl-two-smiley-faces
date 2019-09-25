@@ -12,11 +12,11 @@ int ModelView::numInstances = 0;
 
 // NOTE: You will likely want to modify the ModelView constructor to
 //       take additional parameters.
-ModelView::ModelView(ShaderIF* sIF, vec2* triangleVertices, int nPoints, int mPoints, vec2* mPointVertices) : shaderIF(sIF), serialNumber(++numInstances)
+ModelView::ModelView(ShaderIF* sIF, vec2* triangleVertices, int nPoints, int mPoints, vec2* mVertexPositions) : shaderIF(sIF), serialNumber(++numInstances)
 {
 	nTotalPoints = nPoints;
 	mTotalPoints = mPoints;
-	initModelGeometry(triangleVertices, mPointVertices);
+	initModelGeometry(triangleVertices, mVertexPositions);
 }
 
 ModelView::~ModelView()
@@ -85,7 +85,7 @@ bool ModelView::handleCommand(unsigned char anASCIIChar, double ldsX, double lds
 	return true; // not intended for me; tell Controller to keep trying.
 }
 
-void ModelView::initModelGeometry(vec2* vertices, vec2* mPointVertices)
+void ModelView::initModelGeometry(vec2* nVertexPositions, vec2* mVertexPositions)
 {
 	// Alternate colors between dark green and dark red
 	if ((serialNumber % 2) == 1)
@@ -114,7 +114,7 @@ void ModelView::initModelGeometry(vec2* vertices, vec2* mPointVertices)
 	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
 
 	int numBytesInBuffer = nTotalPoints * sizeof(vec2); // allocate space, send data to GPU
-	glBufferData(GL_ARRAY_BUFFER, numBytesInBuffer, vertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, numBytesInBuffer, nVertexPositions, GL_STATIC_DRAW);
 	glVertexAttribPointer(shaderIF->pvaLoc("mcPosition"), 2, GL_FLOAT, GL_FALSE, 0, 0);
 	glEnableVertexAttribArray(shaderIF->pvaLoc("mcPosition"));
 
@@ -123,53 +123,53 @@ void ModelView::initModelGeometry(vec2* vertices, vec2* mPointVertices)
 	glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
 
 	int numBytesInBufferM = mTotalPoints * sizeof(vec2); // allocate space, send data to GPU
-	glBufferData(GL_ARRAY_BUFFER, numBytesInBufferM, mPointVertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, numBytesInBufferM, mVertexPositions, GL_STATIC_DRAW);
 	glVertexAttribPointer(shaderIF->pvaLoc("mcPosition"), 2, GL_FLOAT, GL_FALSE, 0, 0);
 	glEnableVertexAttribArray(shaderIF->pvaLoc("mcPosition"));
 
 	// determine and remember min/max coordinates
-	xmin = xmax = vertices[0][0];
-	ymin = ymax = vertices[0][1];
+	xmin = xmax = nVertexPositions[0][0];
+	ymin = ymax = nVertexPositions[0][1];
 	
 	for (int i = 0; i < nTotalPoints; i++)
 	{
-		if (vertices[i][0] < xmin)
+		if (nVertexPositions[i][0] < xmin)
 		{
-			xmin = vertices[i][0];
+			xmin = nVertexPositions[i][0];
 		}
-		else if (vertices[i][0] > xmax)
+		else if (nVertexPositions[i][0] > xmax)
 		{
-			xmax = vertices[i][0];
+			xmax = nVertexPositions[i][0];
 		}
 
-		if (vertices[i][1] < ymin)
+		if (nVertexPositions[i][1] < ymin)
 		{
-			ymin = vertices[i][1];
+			ymin = nVertexPositions[i][1];
 		}
-		else if (vertices[i][1] > ymax)
+		else if (nVertexPositions[i][1] > ymax)
 		{
-			ymax = vertices[i][1];
+			ymax = nVertexPositions[i][1];
 		}
 	}
 
 	for (int i = 0; i < mTotalPoints; i++)
 	{
-		if (mPointVertices[i][0] < xmin)
+		if (mVertexPositions[i][0] < xmin)
 		{
-			xmin = mPointVertices[i][0];
+			xmin = mVertexPositions[i][0];
 		}
-		else if (mPointVertices[i][0] > xmax)
+		else if (mVertexPositions[i][0] > xmax)
 		{
-			xmax = mPointVertices[i][0];
+			xmax = mVertexPositions[i][0];
 		}
 
-		if (mPointVertices[i][1] < ymin)
+		if (mVertexPositions[i][1] < ymin)
 		{
-			ymin = mPointVertices[i][1];
+			ymin = mVertexPositions[i][1];
 		}
-		else if (mPointVertices[i][1] > ymax)
+		else if (mVertexPositions[i][1] > ymax)
 		{
-			ymax = mPointVertices[i][1];
+			ymax = mVertexPositions[i][1];
 		}
 	}
 }
