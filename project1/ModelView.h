@@ -38,7 +38,6 @@ private:
 	GLuint vbo[2];
 	int nTotalPoints;
 	int mTotalPoints;
-	int serialNumber;
 	float xmin, xmax, ymin, ymax;
 	vec3 nColor;
 	vec3 mColor;
@@ -69,7 +68,6 @@ private:
 	static void compute2DScaleTrans(float* scaleTrans);
 
 	static double mcRegionOfInterest[6];
-	static int numInstances; // needed for serialNumber
 	static bool aspectRatioPreservationEnabled;
 };
 

@@ -8,9 +8,8 @@
 
 double ModelView::mcRegionOfInterest[6] = { -1.0, 1.0, -1.0, 1.0, -1.0, 1.0 };
 bool ModelView::aspectRatioPreservationEnabled = true;
-int ModelView::numInstances = 0;
 
-ModelView::ModelView(ShaderIF* sIF, vec2* triangleVertices, int nPoints, int mPoints, vec2* mVertexPositions) : shaderIF(sIF), serialNumber(++numInstances)
+ModelView::ModelView(ShaderIF* sIF, vec2* triangleVertices, int nPoints, int mPoints, vec2* mVertexPositions) : shaderIF(sIF)
 {
 	nTotalPoints = nPoints;
 	mTotalPoints = mPoints;
@@ -85,25 +84,11 @@ bool ModelView::handleCommand(unsigned char anASCIIChar, double ldsX, double lds
 
 void ModelView::initModelGeometry(vec2* nVertexPositions, vec2* mVertexPositions)
 {
-	// Alternate colors for n
-	if ((serialNumber % 2) == 1)
-	{
-		nColor[0] = 1; nColor[1] = 0.5; nColor[2] = 0.2;
-	}
-	else
-	{
-		nColor[0] = 1; nColor[1] = 0.5; nColor[2] = 0.2;
-	}
+	// set color for n
+	nColor[0] = 1; nColor[1] = 0.5; nColor[2] = 0.2;
 
-	// Alternate colors for m
-	if ((serialNumber % 2) == 1)
-	{
-		mColor[0] = 0.4; mColor[1] = 0.9; mColor[2] = 0.7;
-	}
-	else
-	{
-		mColor[0] = 0.4; mColor[1] = 0.9; mColor[2] = 0.7;
-	}
+	// set color for m
+	mColor[0] = 0.4; mColor[1] = 0.9; mColor[2] = 0.7;
 
 	// create VAOs and VBOs
 	glGenVertexArrays(2, vao);
