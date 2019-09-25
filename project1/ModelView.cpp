@@ -86,7 +86,18 @@ void ModelView::getMCBoundingBox(double* xyzLimits) const
 
 bool ModelView::handleCommand(unsigned char anASCIIChar, double ldsX, double ldsY)
 {
-	return true;
+	if ((anASCIIChar >= '0') && (anASCIIChar <= '9'))
+	{
+		int which = static_cast<int>(anASCIIChar) - static_cast<int>('0');
+		if (which == serialNumber) // was this message intended for me???
+		{
+			// Yes, it is intended for me. Process and then tell Controller
+			// stop sending this event to other ModelView instances:
+			// colorMode = (colorMode + 1) % 4; // cycle among 0, 1, 2, 3
+			return false; // tell Controller to stop send this event
+		}
+	}
+	return true; // not intended for me; tell Controller to keep trying.
 }
 
 void ModelView::initModelGeometry(vec2* vertices)
