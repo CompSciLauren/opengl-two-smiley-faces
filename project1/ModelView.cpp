@@ -10,8 +10,6 @@ double ModelView::mcRegionOfInterest[6] = { -1.0, 1.0, -1.0, 1.0, -1.0, 1.0 };
 bool ModelView::aspectRatioPreservationEnabled = true;
 int ModelView::numInstances = 0;
 
-// NOTE: You will likely want to modify the ModelView constructor to
-//       take additional parameters.
 ModelView::ModelView(ShaderIF* sIF, vec2* triangleVertices, int nPoints, int mPoints, vec2* mVertexPositions) : shaderIF(sIF), serialNumber(++numInstances)
 {
 	nTotalPoints = nPoints;
@@ -30,11 +28,11 @@ void ModelView::deleteObject()
 	{
 		glDeleteBuffers(1, vbo);
 		glDeleteVertexArrays(1, vao);
-		vao[0] = vbo[0] = 0; // keep? don't keep?
+		vao[0] = vbo[0] = 0;
 	}
 }
 
-void ModelView::compute2DScaleTrans(float* scaleTransF) // CLASS METHOD
+void ModelView::compute2DScaleTrans(float* scaleTransF)
 {
 	double xmin = mcRegionOfInterest[0];
 	double xmax = mcRegionOfInterest[1];
@@ -51,7 +49,7 @@ void ModelView::compute2DScaleTrans(float* scaleTransF) // CLASS METHOD
 
     // We are only concerned with the xy extents for now, hence we will
     // ignore mcRegionOfInterest[4] and mcRegionOfInterest[5].
-    // Map the overall limits to the -1..+1 range expected by the OpenGL engine:
+    // Map the overall limits to the -1..+1 range expected by the OpenGL engine
 	double scaleTrans[4];
 	linearMap(xmin, xmax, -1.0, 1.0, scaleTrans[0], scaleTrans[1]);
 	linearMap(ymin, ymax, -1.0, 1.0, scaleTrans[2], scaleTrans[3]);
@@ -82,12 +80,12 @@ bool ModelView::handleCommand(unsigned char anASCIIChar, double ldsX, double lds
 	{
 		toggle = false;
 	}
-	return true; // not intended for me; tell Controller to keep trying.
+	return true; // not intended for me; tell Controller to keep trying
 }
 
 void ModelView::initModelGeometry(vec2* nVertexPositions, vec2* mVertexPositions)
 {
-	// Alternate colors between dark green and dark red
+	// Alternate colors for n
 	if ((serialNumber % 2) == 1)
 	{
 		nColor[0] = 0.0; nColor[1] = 0.5; nColor[2] = 0.0;
@@ -97,6 +95,7 @@ void ModelView::initModelGeometry(vec2* nVertexPositions, vec2* mVertexPositions
 		nColor[0] = 0.5; nColor[1] = 0.0; nColor[2] = 0.0;
 	}
 
+	// Alternate colors for m
 	if ((serialNumber % 2) == 1)
 	{
 		mColor[0] = 0.4; mColor[1] = 0.9; mColor[2] = 0.7;
@@ -106,23 +105,26 @@ void ModelView::initModelGeometry(vec2* nVertexPositions, vec2* mVertexPositions
 		mColor[0] = 0.2; mColor[1] = 0.0; mColor[2] = 0.4;
 	}
 
-	glGenVertexArrays(2, vao); 	// create VAO and VBO names
+	// create VAOs and VBOs
+	glGenVertexArrays(2, vao);
 	glGenBuffers(2, vbo);
 
-	// n stuff
-	glBindVertexArray(vao[0]); 	// initialize them
+	// initialize these for n
+	glBindVertexArray(vao[0]);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
 
-	int numBytesInBuffer = nTotalPoints * sizeof(vec2); // allocate space, send data to GPU
+	// allocate space and send data to GPU for n
+	int numBytesInBuffer = nTotalPoints * sizeof(vec2); 
 	glBufferData(GL_ARRAY_BUFFER, numBytesInBuffer, nVertexPositions, GL_STATIC_DRAW);
 	glVertexAttribPointer(shaderIF->pvaLoc("mcPosition"), 2, GL_FLOAT, GL_FALSE, 0, 0);
 	glEnableVertexAttribArray(shaderIF->pvaLoc("mcPosition"));
 
-	// m stuff
-	glBindVertexArray(vao[1]); // initialize them
+	// initialize these for m
+	glBindVertexArray(vao[1]);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
 
-	int numBytesInBufferM = mTotalPoints * sizeof(vec2); // allocate space, send data to GPU
+	// allocate space and send data to GPU for m
+	int numBytesInBufferM = mTotalPoints * sizeof(vec2);
 	glBufferData(GL_ARRAY_BUFFER, numBytesInBufferM, mVertexPositions, GL_STATIC_DRAW);
 	glVertexAttribPointer(shaderIF->pvaLoc("mcPosition"), 2, GL_FLOAT, GL_FALSE, 0, 0);
 	glEnableVertexAttribArray(shaderIF->pvaLoc("mcPosition"));
@@ -227,13 +229,13 @@ void ModelView::render() const
 	{
 		glBindVertexArray(vao[0]);
 		glDrawArrays(GL_LINE_STRIP, 0, nTotalPoints);
-		glUniform3fv(shaderIF->ppuLoc("color"), 1, nColor); // establish the triangle color
+		glUniform3fv(shaderIF->ppuLoc("color"), 1, nColor); // establish the color for n
 	}
 	else
 	{
 		glBindVertexArray(vao[1]);
 		glDrawArrays(GL_LINE_STRIP, 0, mTotalPoints);
-		glUniform3fv(shaderIF->ppuLoc("color"), 1, mColor); // establish the triangle color
+		glUniform3fv(shaderIF->ppuLoc("color"), 1, mColor); // establish the color for m
 	}
 
 	// restore the previous program
