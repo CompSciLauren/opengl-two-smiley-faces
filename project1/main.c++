@@ -57,6 +57,11 @@ int main(int argc, char* argv[])
 	std::ifstream userFileChoice;
 	std::string fileName = argv[1];
 	userFileChoice.open(fileName);
+	if(!userFileChoice.is_open())
+	{
+		std::cout << "Failed to open file. File was not found.\n";
+		exit(1);
+	}
 	while (!userFileChoice.eof())
 	{
 		userFileChoice >> totalNPoints;
@@ -87,6 +92,6 @@ int main(int argc, char* argv[])
 	c.run();
 
 	delete sIF;
-
+	userFileChoice.close();
 	return 0;
 }
