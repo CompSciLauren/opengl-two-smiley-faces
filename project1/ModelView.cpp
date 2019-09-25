@@ -88,11 +88,11 @@ void ModelView::initModelGeometry(vec2* nVertexPositions, vec2* mVertexPositions
 	// Alternate colors for n
 	if ((serialNumber % 2) == 1)
 	{
-		nColor[0] = 0.0; nColor[1] = 0.5; nColor[2] = 0.0;
+		nColor[0] = 1; nColor[1] = 0.5; nColor[2] = 0.2;
 	}
 	else
 	{
-		nColor[0] = 0.5; nColor[1] = 0.0; nColor[2] = 0.0;
+		nColor[0] = 1; nColor[1] = 0.5; nColor[2] = 0.2;
 	}
 
 	// Alternate colors for m
@@ -102,7 +102,7 @@ void ModelView::initModelGeometry(vec2* nVertexPositions, vec2* mVertexPositions
 	}
 	else
 	{
-		mColor[0] = 0.2; mColor[1] = 0.0; mColor[2] = 0.4;
+		mColor[0] = 0.4; mColor[1] = 0.9; mColor[2] = 0.7;
 	}
 
 	// create VAOs and VBOs
@@ -227,15 +227,15 @@ void ModelView::render() const
     // make require primitive call(s)
 	if (toggle == true)
 	{
+		glUniform3fv(shaderIF->ppuLoc("color"), 1, nColor); // establish the color for n
 		glBindVertexArray(vao[0]);
 		glDrawArrays(GL_LINE_STRIP, 0, nTotalPoints);
-		glUniform3fv(shaderIF->ppuLoc("color"), 1, nColor); // establish the color for n
 	}
 	else
 	{
+		glUniform3fv(shaderIF->ppuLoc("color"), 1, mColor); // establish the color for m
 		glBindVertexArray(vao[1]);
 		glDrawArrays(GL_LINE_STRIP, 0, mTotalPoints);
-		glUniform3fv(shaderIF->ppuLoc("color"), 1, mColor); // establish the color for m
 	}
 
 	// restore the previous program
