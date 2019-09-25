@@ -10,8 +10,8 @@ This is my first OpenGL project. When the program runs, you will be able to swit
 
 ## What it Looks Like
 
-Here are the two smiley faces you can view. The first one is viewed by pressing `n` and the second one is viewed by pressing `m`.
+Here are the two smiley faces you can view. Press `n` to view the first one and `m` to view the second one.
 
-<img src="https://github.com/compscilauren/opengl-two-smiley-faces/blob/master/smiley_version1.png">
+<img width="300" src="https://github.com/compscilauren/opengl-two-smiley-faces/blob/master/smiley_version1.png">
 
-<img src="https://github.com/compscilauren/opengl-two-smiley-faces/blob/master/smiley_version2.png">
+<img width="300" src="https://github.com/compscilauren/opengl-two-smiley-faces/blob/master/smiley_version2.png">
