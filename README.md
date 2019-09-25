@@ -1,4 +1,4 @@
-# OpenGL Project1
+# OpenGL Two Smiley Faces
 
 This is my first OpenGL project. When the program runs, you will be able to switch between two different views to see two different versions of a smiley face.
 
