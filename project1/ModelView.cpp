@@ -86,6 +86,7 @@ void ModelView::getMCBoundingBox(double* xyzLimits) const
 
 bool ModelView::handleCommand(unsigned char anASCIIChar, double ldsX, double ldsY)
 {
+	/*
 	if ((anASCIIChar >= '0') && (anASCIIChar <= '9'))
 	{
 		int which = static_cast<int>(anASCIIChar) - static_cast<int>('0');
@@ -108,7 +109,7 @@ bool ModelView::handleCommand(unsigned char anASCIIChar, double ldsX, double lds
 			glBindVertexArray(vao[1]);
 			glDrawArrays(GL_LINE_STRIP, 0, mTotalPoints);
 		}
-	}
+	}*/
 	return true; // not intended for me; tell Controller to keep trying.
 }
 
@@ -225,8 +226,8 @@ void ModelView::render() const
 	glBindVertexArray(vao[0]);
 	glDrawArrays(GL_LINE_STRIP, 0, nTotalPoints);
 
-	glBindVertexArray(vao[1]);
-	glDrawArrays(GL_LINE_STRIP, 0, mTotalPoints);
+	//glBindVertexArray(vao[1]);
+	//glDrawArrays(GL_LINE_STRIP, 0, mTotalPoints);
 
 	// restore the previous program
 	glUseProgram(pgm);
