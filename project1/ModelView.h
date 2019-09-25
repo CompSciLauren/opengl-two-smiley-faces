@@ -22,7 +22,7 @@ class ModelView
 public:
 	// NOTE: You will likely want to modify the ModelView constructor to
 	//       take additional parameters.
-	ModelView(ShaderIF* sIF, vec2* vertices, int nPoints, int mPoints, vec2* mPointsVec);
+	ModelView(ShaderIF* sIF, vec2* vertices, int nPoints, int mPoints, vec2* mPointVertices);
 	virtual ~ModelView();
 
 	// xyzLimits: {mcXmin, mcXmax, mcYmin, mcYmax, mcZmin, mcZmax}
@@ -38,8 +38,8 @@ public:
 private:
 	// TODO: VAO(s), VBO(s), and other relevant INSTANCE variables
 	// DONE
-	GLuint vao[1]; // 1 vao
-	GLuint vbo[1]; // 1 vbo (holds per-vertex attribute data)
+	GLuint vao[2]; // 1 vao
+	GLuint vbo[2]; // 1 vbo (holds per-vertex attribute data)
 	int nTotalPoints;
 	int mTotalPoints;
 	int serialNumber;
@@ -54,7 +54,7 @@ private:
 
 	void deleteObject();
 
-	void initModelGeometry(vec2* vertices, vec2* mPointsVec);
+	void initModelGeometry(vec2* vertices, vec2* mPointVertices);
 
 	// Routines for computing parameters necessary to map from arbitrary
 	// model coordinate ranges into OpenGL's -1..+1 Logical Device Space.

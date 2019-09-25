@@ -15,7 +15,7 @@ void createScene(GLFWController& c, ShaderIF* sIF, float a[], float b[], int tot
 	vec2 vertices[totalNPoints];
 	vec2 buf[totalNPoints];
 
-	vec2* mPointsVec = new vec2[mPoints];
+	vec2* mPointVertices = new vec2[mPoints];
 
 	for (int i = 0; i < totalNPoints; i++)
 	{
@@ -32,11 +32,11 @@ void createScene(GLFWController& c, ShaderIF* sIF, float a[], float b[], int tot
 		//vertices[i][1] = yt;
 		vertices[i][0] = a[i];
 		vertices [i][1] = b[i];
-		mPointsVec[i][0] = buf[i][0];
-		mPointsVec[i][1] = buf[i][1];
+		mPointVertices[i][0] = buf[i][0];
+		mPointVertices[i][1] = buf[i][1];
 	}
 
-	c.addModel(new ModelView(sIF, vertices, totalNPoints, mPoints, mPointsVec));
+	c.addModel(new ModelView(sIF, vertices, totalNPoints, mPoints, mPointVertices));
 }
 
 int main(int argc, char* argv[])
