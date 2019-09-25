@@ -22,7 +22,7 @@ class ModelView
 public:
 	// NOTE: You will likely want to modify the ModelView constructor to
 	//       take additional parameters.
-	ModelView(ShaderIF* sIF, vec2* vertices, int nPoints, int mPoints);
+	ModelView(ShaderIF* sIF, vec2* vertices, int nPoints, int mPoints, vec2* mPointsVec);
 	virtual ~ModelView();
 
 	// xyzLimits: {mcXmin, mcXmax, mcYmin, mcYmax, mcZmin, mcZmax}
@@ -54,7 +54,7 @@ private:
 
 	void deleteObject();
 
-	void initModelGeometry(vec2* vertices);
+	void initModelGeometry(vec2* vertices, vec2* mPointsVec);
 
 	// Routines for computing parameters necessary to map from arbitrary
 	// model coordinate ranges into OpenGL's -1..+1 Logical Device Space.

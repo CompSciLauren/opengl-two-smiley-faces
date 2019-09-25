@@ -12,7 +12,7 @@ int ModelView::numInstances = 0;
 
 // NOTE: You will likely want to modify the ModelView constructor to
 //       take additional parameters.
-ModelView::ModelView(ShaderIF* sIF, vec2* triangleVertices, int nPoints, int mPoints) : shaderIF(sIF), serialNumber(++numInstances)
+ModelView::ModelView(ShaderIF* sIF, vec2* triangleVertices, int nPoints, int mPoints, vec2* mPointsVec) : shaderIF(sIF), serialNumber(++numInstances)
 {
 	// TODO: define and call method(s) to initialize your model and send data to GPU
 	//       Be sure to track this instance's min/max coordinate ranges as you do so.
@@ -20,7 +20,7 @@ ModelView::ModelView(ShaderIF* sIF, vec2* triangleVertices, int nPoints, int mPo
 	// DONE
 	nTotalPoints = nPoints;
 	mTotalPoints = mPoints;
-	initModelGeometry(triangleVertices);
+	initModelGeometry(triangleVertices, mPointsVec);
 }
 
 ModelView::~ModelView()
@@ -84,36 +84,22 @@ void ModelView::getMCBoundingBox(double* xyzLimits) const
 	xyzLimits[5] = 1.0;  // (zmin, zmax) but really it's 0..0
 }
 
+bool toggle = true;
+
 bool ModelView::handleCommand(unsigned char anASCIIChar, double ldsX, double ldsY)
 {
-	/*
-	if ((anASCIIChar >= '0') && (anASCIIChar <= '9'))
+	if (anASCIIChar == 'n')
 	{
-		int which = static_cast<int>(anASCIIChar) - static_cast<int>('0');
-		if (which == serialNumber) // was this message intended for me?
-		{
-			// Yes, it is intended for me. Process and then tell Controller
-			// stop sending this event to other ModelView instances:
-			// toggle display of N lines
-			deleteObject();
-			glBindVertexArray(vao[0]);
-			glDrawArrays(GL_LINE_STRIP, 0, nTotalPoints);
-			return false; // tell Controller to stop send this event
-		}
-		else if (which != serialNumber) // was this message intended for me?
-		{
-			// Yes, it is intended for me. Process and then tell Controller
-			// stop sending this event to other ModelView instances:
-			// toggle display of M lines
-			deleteObject();
-			glBindVertexArray(vao[1]);
-			glDrawArrays(GL_LINE_STRIP, 0, mTotalPoints);
-		}
-	}*/
+		toggle = true;
+	}
+	else if (anASCIIChar == 'm')
+	{
+		toggle = false;
+	}
 	return true; // not intended for me; tell Controller to keep trying.
 }
 
-void ModelView::initModelGeometry(vec2* vertices)
+void ModelView::initModelGeometry(vec2* vertices, vec2* mPointsVec)
 {
 	// Alternate triangle colors between dark green and dark red
 	if ((serialNumber % 2) == 1)
@@ -125,30 +111,48 @@ void ModelView::initModelGeometry(vec2* vertices)
 		nColor[0] = 0.5; nColor[1] = 0.0; nColor[2] = 0.0;
 	}
 
-	// create VAO and VBO names
-	glGenVertexArrays(1, vao);
+	if ((serialNumber % 2) == 1)
+	{
+		mColor[0] = 0.4; mColor[1] = 0.9; mColor[2] = 0.7;
+	}
+	else
+	{
+		mColor[0] = 0.2; mColor[1] = 0.0; mColor[2] = 0.4;
+	}
+
+	glGenVertexArrays(1, vao); 	// create VAO and VBO names
 	glGenBuffers(1, vbo);
 
-	// initialize them
-	glBindVertexArray(vao[0]);
+	// n stuff
+	glBindVertexArray(vao[0]); 	// initialize them
 	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
 
-	// allocate space, send data to GPU
-	int numBytesInBuffer = nTotalPoints * sizeof(vec2);
+	int numBytesInBuffer = nTotalPoints * sizeof(vec2); // allocate space, send data to GPU
 	glBufferData(GL_ARRAY_BUFFER, numBytesInBuffer, vertices, GL_STATIC_DRAW);
 	glVertexAttribPointer(shaderIF->pvaLoc("mcPosition"), 2, GL_FLOAT, GL_FALSE, 0, 0);
 	glEnableVertexAttribArray(shaderIF->pvaLoc("mcPosition"));
+
+	// // m stuff
+	//  glGenVertexArrays(1, vao); 	// create VAO and VBO names
+	//  glGenBuffers(1, vbo);
+	// glBindVertexArray(vao[1]); // initialize them
+	// glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
+
+	// int numBytesInBufferM = mTotalPoints * sizeof(vec2); // allocate space, send data to GPU
+	// glBufferData(GL_ARRAY_BUFFER, numBytesInBufferM, mPointsVec, GL_STATIC_DRAW);
+	// glVertexAttribPointer(shaderIF->pvaLoc("mcPosition"), 2, GL_FLOAT, GL_FALSE, 0, 0);
+	// glEnableVertexAttribArray(shaderIF->pvaLoc("mcPosition"));
 
 	// determine and remember min/max coordinates
 	xmin = xmax = vertices[0][0];
 	ymin = ymax = vertices[0][1];
 	
-	for (int i = 0; i < nTotalPoints; i++)
-	{
-		std::cout << "vertices[" << i << "][0]: " << vertices[i][0] << "\n";
-		std::cout << "vertices[" << i << "][1]: " << vertices[i][1] << "\n";
-	}
-	std::cout << "nTotalPoints: " << nTotalPoints << "\n";
+	// for (int i = 0; i < nTotalPoints; i++)
+	// {
+	// 	std::cout << "vertices[" << i << "][0]: " << vertices[i][0] << "\n";
+	// 	std::cout << "vertices[" << i << "][1]: " << vertices[i][1] << "\n";
+	// }
+	// std::cout << "nTotalPoints: " << nTotalPoints << "\n";
 
 	for (int i = 0; i < nTotalPoints; i++)
 	{
@@ -227,15 +231,19 @@ void ModelView::render() const
 
 	glUniform3fv(shaderIF->ppuLoc("color"), 1, nColor); // establish the triangle color
 
-
 	glUniform3fv(shaderIF->ppuLoc("color"), 1, mColor); // establish the triangle color
 	// TODO: make require primitive call(s)
 	// DONE
-	glBindVertexArray(vao[0]);
-	glDrawArrays(GL_LINE_STRIP, 0, nTotalPoints);
-
-	//glBindVertexArray(vao[1]);
-	//glDrawArrays(GL_LINE_STRIP, 0, mTotalPoints);
+	if (toggle == true)
+	{
+		glBindVertexArray(vao[0]);
+		glDrawArrays(GL_LINE_STRIP, 0, nTotalPoints);
+	}
+	else
+	{
+		glBindVertexArray(vao[1]);
+		glDrawArrays(GL_LINE_STRIP, 0, mTotalPoints);
+	}
 
 	// restore the previous program
 	glUseProgram(pgm);

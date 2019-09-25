@@ -15,23 +15,28 @@ void createScene(GLFWController& c, ShaderIF* sIF, float a[], float b[], int tot
 	vec2 vertices[totalNPoints];
 	vec2 buf[totalNPoints];
 
+	vec2* mPointsVec = new vec2[mPoints];
+
 	for (int i = 0; i < totalNPoints; i++)
 	{
 		float t = i * dt;
-		// for (int j = 0; j < totalNPoints - j - 2; j++) 
-		// {
-		// 	// buf[j] = (1 - t) * buf[j] + t * buf[j + 1];
-		// 	xt = a[0] + (a[1] * t) + (a[2] * pow(t, 2.0)) + (a[3] * pow(t, 3.0));
-		// 	yt = b[0] + (b[1] * t) + (b[2] * pow(t, 2.0)) + (b[3] * pow(t, 3.0));
-		// }
-		// i-th point for the VBO is now in buf[0]
+		for (int j = 0; j < totalNPoints - j - 2; j++) 
+		{
+			buf[j][0] = (1 - t) * buf[j][0] + t * buf[j + 1][0];
+			buf[j][1] = (1 - t) * buf[j][1] + t * buf[j + 1][1];
+			xt = a[0] + (a[1] * t) + (a[2] * pow(t, 2.0)) + (a[3] * pow(t, 3.0));
+			yt = b[0] + (b[1] * t) + (b[2] * pow(t, 2.0)) + (b[3] * pow(t, 3.0));
+		}
+		//i-th point for the VBO is now in buf[0]
 		//vertices[i][0] = xt;
 		//vertices[i][1] = yt;
 		vertices[i][0] = a[i];
 		vertices [i][1] = b[i];
+		mPointsVec[i][0] = buf[i][0];
+		mPointsVec[i][1] = buf[i][1];
 	}
 
-	c.addModel(new ModelView(sIF, vertices, totalNPoints, mPoints));
+	c.addModel(new ModelView(sIF, vertices, totalNPoints, mPoints, mPointsVec));
 }
 
 int main(int argc, char* argv[])
@@ -47,7 +52,7 @@ int main(int argc, char* argv[])
 	std::ifstream userFileChoice;
 	std::string fileName = argv[1];
 	userFileChoice.open(fileName);
-	for (int i = 0; i < 8; i++) // userFileChoice
+	for (int i = 0; i < 8; i++) // was while (userFileChoice)
 	{
 		userFileChoice >> totalNPoints;
 		userFileChoice >> mPoints;
