@@ -1,6 +1,6 @@
 # OpenGL Project1
 
-This is my first OpenGL project.
+This is my first OpenGL project. When the program runs, you will be able to switch between two different views to see two different versions of a smiley face.
 
 ## How to Run Program in Terminal
 
