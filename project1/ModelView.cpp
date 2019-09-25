@@ -14,10 +14,6 @@ int ModelView::numInstances = 0;
 //       take additional parameters.
 ModelView::ModelView(ShaderIF* sIF, vec2* triangleVertices, int nPoints, int mPoints, vec2* mPointVertices) : shaderIF(sIF), serialNumber(++numInstances)
 {
-	// TODO: define and call method(s) to initialize your model and send data to GPU
-	//       Be sure to track this instance's min/max coordinate ranges as you do so.
-	//       (See ModelView::getMCBoundingBox below.)
-	// DONE
 	nTotalPoints = nPoints;
 	mTotalPoints = mPoints;
 	initModelGeometry(triangleVertices, mPointVertices);
@@ -25,8 +21,6 @@ ModelView::ModelView(ShaderIF* sIF, vec2* triangleVertices, int nPoints, int mPo
 
 ModelView::~ModelView()
 {
-	// TODO: delete the vertex array objects and buffers here
-	// DONE
 	deleteObject();
 }
 
@@ -42,10 +36,6 @@ void ModelView::deleteObject()
 
 void ModelView::compute2DScaleTrans(float* scaleTransF) // CLASS METHOD
 {
-	// TODO: This code can be used as is, BUT be absolutely certain you
-	//       understand everything about how it works.
-	// DONE
-
 	double xmin = mcRegionOfInterest[0];
 	double xmax = mcRegionOfInterest[1];
 	double ymin = mcRegionOfInterest[2];
@@ -72,10 +62,6 @@ void ModelView::compute2DScaleTrans(float* scaleTransF) // CLASS METHOD
 // xyzLimits: {mcXmin, mcXmax, mcYmin, mcYmax, mcZmin, mcZmax}
 void ModelView::getMCBoundingBox(double* xyzLimits) const
 {
-	// TODO:
-	// DONE
-	// Put this ModelView instance's min and max x, y, and z extents
-	// into xyzLimits[0..5]. (-1 .. +1 is OK for z direction for 2D models)
 	xyzLimits[0] = xmin;
 	xyzLimits[1] = xmax;
 	xyzLimits[2] = ymin;
@@ -101,7 +87,7 @@ bool ModelView::handleCommand(unsigned char anASCIIChar, double ldsX, double lds
 
 void ModelView::initModelGeometry(vec2* vertices, vec2* mPointVertices)
 {
-	// Alternate triangle colors between dark green and dark red
+	// Alternate colors between dark green and dark red
 	if ((serialNumber % 2) == 1)
 	{
 		nColor[0] = 0.0; nColor[1] = 0.5; nColor[2] = 0.0;
@@ -145,13 +131,6 @@ void ModelView::initModelGeometry(vec2* vertices, vec2* mPointVertices)
 	xmin = xmax = vertices[0][0];
 	ymin = ymax = vertices[0][1];
 	
-	// for (int i = 0; i < nTotalPoints; i++)
-	// {
-	// 	std::cout << "vertices[" << i << "][0]: " << vertices[i][0] << "\n";
-	// 	std::cout << "vertices[" << i << "][1]: " << vertices[i][1] << "\n";
-	// }
-	// std::cout << "nTotalPoints: " << nTotalPoints << "\n";
-
 	for (int i = 0; i < nTotalPoints; i++)
 	{
 		if (vertices[i][0] < xmin)
@@ -208,10 +187,6 @@ void ModelView::linearMap(double fromMin, double fromMax, double toMin, double t
 void ModelView::matchAspectRatio(double& xmin, double& xmax,
         double& ymin, double& ymax, double vAR)
 {
-	// TODO: This code can be used as is, BUT be absolutely certain you
-	//       understand everything about how it works.
-	// DONE
-
 	double wHeight = ymax - ymin;
 	double wWidth = xmax - xmin;
 	double wAR = wHeight / wWidth;
@@ -242,14 +217,12 @@ void ModelView::render() const
 	// draw the triangles using our vertex and fragment shaders
 	glUseProgram(shaderIF->getShaderPgmID());
 
-	// TODO: set scaleTrans (and all other needed) uniform(s)
-	// DONE
+	// set scaleTrans (and all other needed) uniform(s)
 	float scaleTrans[4];
 	compute2DScaleTrans(scaleTrans);
 	glUniform4fv(shaderIF->ppuLoc("scaleTrans"), 1, scaleTrans);
 
-	// TODO: make require primitive call(s)
-	// DONE
+    // make require primitive call(s)
 	if (toggle == true)
 	{
 		glBindVertexArray(vao[0]);

@@ -7,8 +7,6 @@
 
 void createScene(GLFWController& c, ShaderIF* sIF, float a[], float b[], int totalNPoints, int mPoints)
 {
-	// TODO: Complete this function
-	// DONE
 	float dt = 1.0 / (mPoints - 1);
 	
 	vec2 vertices[totalNPoints];

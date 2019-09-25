@@ -20,8 +20,6 @@ typedef float vec3[3];
 class ModelView
 {
 public:
-	// NOTE: You will likely want to modify the ModelView constructor to
-	//       take additional parameters.
 	ModelView(ShaderIF* sIF, vec2* vertices, int nPoints, int mPoints, vec2* mPointVertices);
 	virtual ~ModelView();
 
@@ -30,16 +28,14 @@ public:
 	bool handleCommand(unsigned char anASCIIChar, double ldsX, double ldsY);
 	void render() const;
 
-	// Viewing controls common to 2D and 3D:
+	// viewing controls common to 2D and 3D
 	static void setAspectRatioPreservationEnabled(bool b)
 		{ aspectRatioPreservationEnabled = b; }
 	static void setMCRegionOfInterest(double xyz[6]);
 
 private:
-	// TODO: VAO(s), VBO(s), and other relevant INSTANCE variables
-	// DONE
-	GLuint vao[2]; // 1 vao
-	GLuint vbo[2]; // 1 vbo (holds per-vertex attribute data)
+	GLuint vao[2];
+	GLuint vbo[2];
 	int nTotalPoints;
 	int mTotalPoints;
 	int serialNumber;
@@ -48,9 +44,6 @@ private:
 	vec3 mColor;
 
 	ShaderIF* shaderIF;
-	
-	// TODO: add uniform and attribute variable location CLASS variables
-	// DONE
 
 	void deleteObject();
 
