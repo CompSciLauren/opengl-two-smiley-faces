@@ -10,30 +10,43 @@ void createScene(GLFWController& c, ShaderIF* sIF, float a[], float b[], int tot
 	// TODO: Complete this function
 	// DONE
 	float dt = 1.0 / (mPoints - 1);
-	float xt, yt;
-
+	
 	vec2 vertices[totalNPoints];
 	vec2 buf[totalNPoints];
 
 	vec2* mPointVertices = new vec2[mPoints];
 
+	float t;
+
 	for (int i = 0; i < totalNPoints; i++)
 	{
-		float t = i * dt;
-		for (int j = 0; j < totalNPoints - j - 2; j++) 
-		{
-			buf[j][0] = (1 - t) * buf[j][0] + t * buf[j + 1][0];
-			buf[j][1] = (1 - t) * buf[j][1] + t * buf[j + 1][1];
-			xt = a[0] + (a[1] * t) + (a[2] * pow(t, 2.0)) + (a[3] * pow(t, 3.0));
-			yt = b[0] + (b[1] * t) + (b[2] * pow(t, 2.0)) + (b[3] * pow(t, 3.0));
-		}
-		//i-th point for the VBO is now in buf[0]
-		//vertices[i][0] = xt;
-		//vertices[i][1] = yt;
 		vertices[i][0] = a[i];
-		vertices [i][1] = b[i];
-		mPointVertices[i][0] = buf[i][0];
-		mPointVertices[i][1] = buf[i][1];
+		vertices[i][1] = b[i];
+	}
+
+	for (int i = 0; i < mPoints; i++)
+	{
+		for (int a = 0; a < totalNPoints; a++)
+		{
+			buf[a][0] = vertices[a][0];
+			buf[a][1] = vertices[a][1];
+		}
+
+		t = i * dt;
+		for (int j = 0; j <= totalNPoints - 2; j++) 
+		 {
+		 	for (int k = 0; k <= totalNPoints - j - 2; k++)
+		 	{
+//				std::cout << "VALUES OF N: " << totalNPoints - j - 2 << "\n";
+				// std::cout << "VALUES OF K: " << k << "\n";
+
+		 		buf[j][0] = (1 - t) * buf[j][0] + t * buf[j + 1][0];
+		 		buf[j][1] = (1 - t) * buf[j][1] + t * buf[j + 1][1];
+		 	}
+		 }
+		//i-th point for the VBO is now in buf[0]
+		mPointVertices[i][0] = buf[0][0];
+		mPointVertices[i][1] = buf[0][1];
 	}
 
 	c.addModel(new ModelView(sIF, vertices, totalNPoints, mPoints, mPointVertices));

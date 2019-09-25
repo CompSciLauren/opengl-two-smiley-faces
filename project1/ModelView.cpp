@@ -172,6 +172,27 @@ void ModelView::initModelGeometry(vec2* vertices, vec2* mPointVertices)
 			ymax = vertices[i][1];
 		}
 	}
+
+	for (int i = 0; i < mTotalPoints; i++)
+	{
+		if (mPointVertices[i][0] < xmin)
+		{
+			xmin = mPointVertices[i][0];
+		}
+		else if (mPointVertices[i][0] > xmax)
+		{
+			xmax = mPointVertices[i][0];
+		}
+
+		if (mPointVertices[i][1] < ymin)
+		{
+			ymin = mPointVertices[i][1];
+		}
+		else if (mPointVertices[i][1] > ymax)
+		{
+			ymax = mPointVertices[i][1];
+		}
+	}
 }
 
 // linearMap determines the scale and translate parameters needed in
