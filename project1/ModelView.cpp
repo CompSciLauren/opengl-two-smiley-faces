@@ -142,6 +142,14 @@ void ModelView::initModelGeometry(vec2* vertices)
 	// determine and remember min/max coordinates
 	xmin = xmax = vertices[0][0];
 	ymin = ymax = vertices[0][1];
+	
+	for (int i = 0; i < nTotalPoints; i++)
+	{
+		std::cout << "vertices[" << i << "][0]: " << vertices[i][0] << "\n";
+		std::cout << "vertices[" << i << "][1]: " << vertices[i][1] << "\n";
+	}
+	std::cout << "nTotalPoints: " << nTotalPoints << "\n";
+
 	for (int i = 0; i < nTotalPoints; i++)
 	{
 		if (vertices[i][0] < xmin)
