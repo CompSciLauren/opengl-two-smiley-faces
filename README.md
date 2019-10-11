@@ -4,9 +4,10 @@ This is my first OpenGL project. When the program runs, you will be able to swit
 
 ## How to Run Program in Terminal
 
-1. Inside project1 folder, run `make` command
-2. Type `./main Project1_SampleData.txt`
-3. Press `n` to view n points and `m` to view m points
+1. Clone or download the repo
+2. Inside project1 folder, run `make` command
+3. Type `./main Project1_SampleData.txt`
+4. Press `n` to view n points and `m` to view m points
 
 ## What it Looks Like
 
